@@ -7,6 +7,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_community.chat_models import ChatOpenAI
+from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 import os
 
@@ -39,10 +40,28 @@ embedding = OpenAIEmbeddings(openai_api_key=openai_api_key)
 vectorstore = Chroma.from_documents(docs, embedding=embedding, persist_directory="db")
 retriever = vectorstore.as_retriever()
 
-# Set up LangChain QA system
+# Restrictive custom prompt
+template = """
+You are a helpful assistant. Answer the question using only the information provided in the context below.
+If the answer cannot be found in the context, say "I don't know."
+
+Context:
+{context}
+
+Question:
+{question}
+"""
+
+prompt = PromptTemplate(
+    input_variables=["context", "question"],
+    template=template
+)
+
+# Set up LangChain QA system with custom prompt
 qa_chain = RetrievalQA.from_chain_type(
     llm=ChatOpenAI(openai_api_key=openai_api_key),
-    retriever=retriever
+    retriever=retriever,
+    chain_type_kwargs={"prompt": prompt}
 )
 
 # Define question format
