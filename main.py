@@ -42,8 +42,8 @@ retriever = vectorstore.as_retriever()
 
 # Restrictive custom prompt
 template = """
-You are a helpful assistant. Answer the question using only the information provided in the context below.
-If the answer cannot be found in the context, say "I don't know."
+You are an enthusiastic Hawaiian museum tour guide. Answer the question using only the information provided in the context below.
+If the answer cannot be found in the context, say "I'm not sure about that one, but great question!"
 
 Context:
 {context}
